@@ -1,21 +1,50 @@
 import MovieCard from "../components/MovieCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../css/Home.css";
+import { getPopularMovies, getSearchedMovie } from "../backend/api.js";
 
 function Home() {
-    const movies = [
-        { id: 1, title: "John Wick", releaseDate: "1999" },
-        { id: 2, title: "Pokemon Advantures", releaseDate: "2005" },
-        { id: 3, title: "The Glass Worker", releaseDate: "2021" },
-        { id: 4, title: "Terminator", releaseDate: "2000" }
-    ]
-
+    const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [searchMovie, setSearchMovie] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Search Movie");
+        
+        if (!searchMovie.trim()) return;
+        if (loading) return;
+        
+        setLoading(true);
+        try {
+            const movies = await getSearchedMovie(searchMovie);
+            setMovies(movies);
+        } catch(err) {
+            console.log(err);
+            setError("Error searching movies...");
+        } finally {
+            setLoading(false);
+        }
     };
+
+    // Use effect runs every teh the [] changes 
+    // but with empty it means to run only once when the 
+    // component is created
+    useEffect(() => {
+        const loadPopularMovies = async () => {
+            try {
+                const popularMovies = await getPopularMovies();
+                setMovies(popularMovies);
+            } catch(err) {
+                console.log(err);
+                setError("Error Happended...");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPopularMovies();
+    }, []);
 
     return (
     <div className="home">
@@ -33,10 +62,11 @@ function Home() {
         </button>
         </form>
 
-        <div className="movies-grid">
-            {movies.map(movie => movie.title.toLowerCase().startsWith(searchMovie) && 
-            <MovieCard movie={movie} key={movie.id}/>)}
+        {loading ? (<div className="loading">loading...</div>) : (
+            <div className="movies-grid">
+            {movies.map(movie => <MovieCard movie={movie} key={movie.id}/>)}
         </div>
+        )}
     </div>
     );
 }
