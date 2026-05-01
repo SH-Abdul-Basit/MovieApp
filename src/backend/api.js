@@ -13,8 +13,5 @@ const getSearchedMovie = async (title) => {
     return data.results;
 };
 
-// const getSearchedMovie = () => {
-//     console.log("Search");
-// };
 
 export { getPopularMovies, getSearchedMovie };
