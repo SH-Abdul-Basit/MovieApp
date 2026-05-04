@@ -7,6 +7,8 @@ function MovieCard({ movie }) {
     const navigator = useNavigate();
 
     const makeFavorite = (e) => {
+        e.stopPropagation();
+
         e.preventDefault();
         if (!isFavorite(movie.id)) addToFavorites(movie);
         else removeFromFavorites(movie.id);
@@ -15,7 +17,7 @@ function MovieCard({ movie }) {
     return (
         <div className="movie-card"
             onClick={() => {
-                navigator(`/player/${movie.id}`);
+                navigator(`/details/${movie.id}`);
                 //window.location.href = `https://vidsrc.xyz/embed/movie/${movie.id}`;
                 //navigator(`https://www.youtube.com/watch?v=WZj41aaI3X0`)
             }}>

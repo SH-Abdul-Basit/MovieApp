@@ -13,5 +13,11 @@ const getSearchedMovie = async (title) => {
     return data.results;
 };
 
+const getMovieById = async (id) => {
+    const response = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
+    const data = await response.json();
+    return data;
+};
 
-export { getPopularMovies, getSearchedMovie };
+
+export { getPopularMovies, getSearchedMovie, getMovieById };
